@@ -13,6 +13,15 @@ use Illuminate\Http\Request;
 |
 */
 
+const API_CONTROLLER_PATH = 'API\\';
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+Route::apiResources([
+    'users' => API_CONTROLLER_PATH.'UserController'
+]);
+
+Route::get('profile',API_CONTROLLER_PATH.'UserController@profile');
