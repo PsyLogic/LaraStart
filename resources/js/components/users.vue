@@ -18,7 +18,7 @@
                                 <th>name</th>
                                 <th>username</th>
                                 <th>Email</th>
-                                <th>Avatar</th>
+                                <!-- <th>Avatar</th> -->
                                 <th>Role</th>
                                 <th>Status</th>
                                 <th>Registred At</th>
@@ -29,7 +29,7 @@
                                 <td>{{user.name | capitalize}}</td>
                                 <td>{{user.username}}</td>
                                 <td>{{user.email}}</td>
-                                <td>{{user.avatar}}</td>
+                                <!-- <td><img :src="user.avatar" style="width:50px;" class="rounded"/></td> -->
                                 <td>{{user.type | capitalize}}</td>
                                 <td><span class="badge" :class="(user.status == 1) ? 'badge-success' : 'badge-danger'">{{ userStatus(user.status) }}</span></td>
                                 <td>{{ user.created_at | humainDate}}</td>

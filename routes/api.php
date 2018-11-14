@@ -25,3 +25,4 @@ Route::apiResources([
 ]);
 
 Route::get('profile',API_CONTROLLER_PATH.'UserController@profile');
+Route::post('profile/edit/{id}',API_CONTROLLER_PATH.'UserController@profileUpdate');

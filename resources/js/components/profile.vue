@@ -2,6 +2,9 @@
 .widget-user .widget-user-image{
     top:195px;
 }
+.widget-user .widget-user-image>img{
+    height:90px;
+}
 </style>
 <template>
     <div class="container">
@@ -13,7 +16,7 @@
                         <h5 class="widget-user-desc">Web Designer</h5>
                     </div>
                     <div class="widget-user-image">
-                        <img class="img-circle" src="images/boy.png" alt="User Avatar">
+                        <img class="img-circle" :src="form.avatar" alt="User Avatar">
                     </div>
                     <div class="card-footer">
                         <div class="row">
@@ -54,39 +57,40 @@
                             </div>
                             <!-- /.tab-pane -->
                             <div class="tab-pane" id="settings">
-                                <form class="form-horizontal">
+                                <form class="form-horizontal" @submit.prevent="update" @keydown="form.onKeydown($event)" enctype="multipart/form-data">
+                                    <input type="hidden" id="id" name="id" v-model="form.id">
                                     <div class="form-group">
                                         <label for="name" class="col-sm-2 control-label">Name</label>
 
                                         <div class="col-sm-10">
-                                            <input v-model="form.name" type="email" class="form-control" id="name" placeholder="Name">
+                                            <input v-model="form.name" type="text" class="form-control" name="name" id="name" placeholder="Name">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="username" class="col-sm-2 control-label">username</label>
 
                                         <div class="col-sm-10">
-                                            <input v-model="form.username" type="email" class="form-control" id="username" placeholder="username">
+                                            <input v-model="form.username" type="text" class="form-control" name="username" id="username" placeholder="username">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="email" class="col-sm-2 control-label">Email</label>
 
                                         <div class="col-sm-10">
-                                            <input v-model="form.email" type="email" class="form-control" id="email" placeholder="Email">
+                                            <input v-model="form.email" type="email" class="form-control" id="email" name="email" placeholder="Email">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="bio" class="col-sm-2 control-label">Bio</label>
 
                                         <div class="col-sm-10">
-                                            <textarea v-model="form.bio" class="form-control" id="bio" placeholder="Bio"></textarea>
+                                            <textarea v-model="form.bio" class="form-control" name="bio" id="bio" placeholder="Bio"></textarea>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="avatar" class="col-sm-2 control-label">Avatar</label>
                                         <div class="col-sm-10">
-                                            <input type="file" class="form-control" id="avatar">
+                                            <input type="file" class="form-control" name="avatar" id="avatar">
                                         </div>
                                     </div>
                                     <hr>
@@ -122,8 +126,16 @@
         created(){
             axios.get('api/profile')
                 .then(({data}) => {this.form.fill(data)} )
+        },
+        methods:{
+            update(e){
+                let data = new FormData(e.target)
+                axios.post('api/profile/edit/'+this.form.id,data).
+                then(({data}) => {
+                    this.form.fill(data)
+                    $('#avatar').val('');
+                })
+            }
         }
-        
     }
-
 </script>

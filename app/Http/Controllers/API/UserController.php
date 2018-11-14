@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\API;
 
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
-use App\User;
 
 class UserController extends Controller
 {
@@ -70,14 +71,15 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function profile()
     {
         return auth('api')->user();
+    
+    
     }
-
+    
     /**
      * Update the specified resource in storage.
      *
@@ -87,6 +89,18 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
+        return $this->profileUpdate($request,$id);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function profileUpdate(Request $request, $id)
+    {
         $user = User::findOrFail($id);
         $this->validate($request,[
             'name' => ['required', 'string', 'max:255'],
@@ -95,7 +109,23 @@ class UserController extends Controller
             'password' => ['sometimes', 'string', 'min:6', 'confirmed'],
         ]);
 
-        return response()->json($user->update($request->all()));
+        $user->name = $request->name;
+        $user->username = $request->username;
+        $user->email = $request->email;
+        $user->bio = $request->bio;
+
+        if($request->hasFile('avatar')){
+            if(!is_null($user->avatar)){
+                Storage::delete($user->avatar);
+            }
+            $this->validate($request,[
+                'avatar' => ['required', 'image','file', 'mimes:jpeg,jpg,png'],
+            ]);
+            $user->avatar = $request->file('avatar')->store('images');
+        }
+        $user->save();
+
+        return response()->json(User::findOrFail($id));
     }
 
     /**
